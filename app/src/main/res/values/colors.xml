@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#4DD0E1</color>
+    <color name="colorPrimaryDark">#0097A7</color>
+    <color name="colorAccent">#FF5722</color>
+
+    <color name="colorBgController">#888888</color>
+    <color name="colorBgCar">@color/colorPrimaryDark</color>
+
+</resources>

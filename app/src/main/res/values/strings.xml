@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">CMPE 443 Car Project Controller</string>
+    <string name="left">Left</string>
+    <string name="right">Right</string>
+    <string name="stop">Stop</string>
+    <string name="forward">Forward</string>
+    <string name="back">Back</string>
+    <string name="find_device">Find Device</string>
+    <string name="status">Status</string>
+    <string name="status_request">Status Request</string>
+    <string name="start">Start</string>
+    <string name="test_mode">(A)Test Mode</string>
+    <string name="auto_mode">(B)Auto Mode</string>
+</resources>

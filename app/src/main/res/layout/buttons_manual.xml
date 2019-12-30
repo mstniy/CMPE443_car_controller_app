@@ -18,7 +18,7 @@
     <com.karacasoft.cmpe443carprojectcontroller.VerticalSeekBar
         android:id="@+id/manual_seekbar_left"
         android:layout_width="32dp"
-        android:layout_height="150dp"
+        android:layout_height="200dp"
         android:layout_marginLeft="32dp"
         app:layout_constraintBottom_toTopOf="@+id/manual_btn_status_request"
         app:layout_constraintLeft_toLeftOf="parent" />
@@ -26,7 +26,7 @@
     <com.karacasoft.cmpe443carprojectcontroller.VerticalSeekBar
         android:id="@+id/manual_seekbar_right"
         android:layout_width="32dp"
-        android:layout_height="150dp"
+        android:layout_height="200dp"
         android:layout_marginRight="32dp"
         app:layout_constraintBottom_toTopOf="@+id/manual_btn_status_request"
         app:layout_constraintRight_toRightOf="parent" />

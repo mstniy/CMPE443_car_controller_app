@@ -108,8 +108,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateManualDC() {
-        val currentLeftDC = buttons_frame.manual_seekbar_left.progress/100.0
-        val currentRightDC = buttons_frame.manual_seekbar_right.progress/100.0
+        val currentLeftDC = (buttons_frame.manual_seekbar_left.progress-50)/50.0
+        val currentRightDC = (buttons_frame.manual_seekbar_right.progress-50)/50.0
 
         if (currentLeftDC == manualLastLeftDC && currentRightDC == manualLastRightDC)
             return
@@ -126,6 +126,8 @@ class MainActivity : AppCompatActivity() {
         inflater.inflate(R.layout.buttons_manual, buttons_frame, true)
         manualLastLeftDC = 0.0
         manualLastRightDC = 0.0
+        buttons_frame.manual_seekbar_left.progress = 50
+        buttons_frame.manual_seekbar_right.progress = 50
         buttons_frame.manual_seekbar_left.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 updateManualDC()

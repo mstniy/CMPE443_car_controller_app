@@ -21,6 +21,10 @@ import kotlinx.android.synthetic.main.buttons_manual.view.*
 import kotlinx.android.synthetic.main.buttons_test.view.*
 import java.util.*
 
+enum class ControllerMode {
+    Auto, Test, Manual
+}
+
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
     private lateinit var viewModel : MainViewModel
@@ -37,12 +41,18 @@ class MainActivity : AppCompatActivity() {
 
     private var autoStarted = false
 
+    private var controllerMode = ControllerMode.Test
+
+    private var saveDataEnabled = false
+
     private fun sendMessage(data : String) {
         carManager?.writeData(data)
         viewModel.onSendData(data)
     }
 
     fun switchToAuto() {
+        controllerMode = ControllerMode.Auto
+        invalidateOptionsMenu()
         buttons_frame.removeAllViews()
         var inflater = LayoutInflater.from(this)
         inflater.inflate(R.layout.buttons_auto, buttons_frame, true)
@@ -68,6 +78,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun switchToTest() {
+        controllerMode = ControllerMode.Test
+        invalidateOptionsMenu()
         buttons_frame.removeAllViews()
         var inflater = LayoutInflater.from(this)
         inflater.inflate(R.layout.buttons_test, buttons_frame, true)
@@ -122,6 +134,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun switchToManual() {
+        controllerMode = ControllerMode.Manual
+        saveDataEnabled = false
+        invalidateOptionsMenu()
         buttons_frame.removeAllViews()
         var inflater = LayoutInflater.from(this)
         inflater.inflate(R.layout.buttons_manual, buttons_frame, true)
@@ -256,12 +271,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_menu, menu)
+        if (controllerMode == ControllerMode.Manual) {
+            if (saveDataEnabled)
+                menuInflater.inflate(R.menu.main_menu_save_enabled, menu)
+            else
+                menuInflater.inflate(R.menu.main_menu_save_disabled, menu)
+        }
+        else {
+            menuInflater.inflate(R.menu.main_menu_no_save, menu)
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId) {
+            R.id.save_data -> {
+                saveDataEnabled = !saveDataEnabled
+                //TODO: Do other stuff here too, probably spawn a timer
+                invalidateOptionsMenu()
+            }
             R.id.connect_to_device -> {
                 CarManager.selectedDevice = null
                 val intent = Intent(this, SelectDeviceActivity::class.java)

@@ -44,6 +44,15 @@ class MainActivity : AppCompatActivity() {
         main_btn_start.visibility = View.INVISIBLE
     }
 
+    fun switchToManual() {
+        main_btn_forward.visibility = View.VISIBLE
+        main_btn_backward.visibility = View.VISIBLE
+        main_btn_left.visibility = View.VISIBLE
+        main_btn_right.visibility = View.VISIBLE
+
+        main_btn_start.visibility = View.VISIBLE
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -106,6 +115,12 @@ class MainActivity : AppCompatActivity() {
             carManager?.writeData("TEST")
             viewModel.onSendData("TEST")
             konamiCodeListener.onInput(KonamiCodeController.InputType.B)
+        }
+
+        main_btn_manual_mode.setOnClickListener {
+            switchToManual()
+            carManager?.writeData("MANUAL")
+            viewModel.onSendData("MANUAL")
         }
 
         main_btn_start.setOnClickListener {

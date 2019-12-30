@@ -9,6 +9,7 @@
     <string name="status">Status</string>
     <string name="status_request">Status Request</string>
     <string name="start">Start</string>
+    <string name="manual_mode">Manual Mode</string>
     <string name="test_mode">(B)Test Mode</string>
     <string name="auto_mode">(A)Auto Mode</string>
 </resources>

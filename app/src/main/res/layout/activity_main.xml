@@ -94,9 +94,19 @@
         app:layout_constraintBottom_toTopOf="@+id/main_btn_forward"
         app:layout_constraintStart_toEndOf="@+id/main_btn_auto_mode"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/main_btn_manual_mode"
         />
 
+
+    <Button
+        android:id="@+id/main_btn_manual_mode"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/manual_mode"
+        app:layout_constraintBottom_toTopOf="@+id/main_btn_forward"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/main_btn_test_mode" />
 
     <Button
         android:id="@+id/main_btn_auto_mode"

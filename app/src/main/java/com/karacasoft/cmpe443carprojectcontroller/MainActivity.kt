@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -14,6 +15,8 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.buttons_auto.view.*
+import kotlinx.android.synthetic.main.buttons_test.view.*
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
@@ -27,30 +30,65 @@ class MainActivity : AppCompatActivity() {
     private var konamiCodeActivateCount = 0
 
     fun switchToAuto() {
-        main_btn_forward.visibility = View.INVISIBLE
-        main_btn_backward.visibility = View.INVISIBLE
-        main_btn_left.visibility = View.INVISIBLE
-        main_btn_right.visibility = View.INVISIBLE
+        buttons_frame.removeAllViews()
+        var inflater = LayoutInflater.from(this)
+        inflater.inflate(R.layout.buttons_auto, buttons_frame, true)
 
-        main_btn_start.visibility = View.VISIBLE
+        buttons_frame.auto_btn_startstop.setOnClickListener {
+            carManager?.writeData("START")
+            viewModel.onSendData("START")
+            konamiCodeListener.onInput(KonamiCodeController.InputType.START)
+        }
+
+        buttons_frame.auto_btn_status_request.setOnClickListener {
+            carManager?.writeData("STATUS")
+            viewModel.onSendData("STATUS")
+        }
     }
 
     fun switchToTest() {
-        main_btn_forward.visibility = View.VISIBLE
-        main_btn_backward.visibility = View.VISIBLE
-        main_btn_left.visibility = View.VISIBLE
-        main_btn_right.visibility = View.VISIBLE
+        buttons_frame.removeAllViews()
+        var inflater = LayoutInflater.from(this)
+        inflater.inflate(R.layout.buttons_test, buttons_frame, true)
 
-        main_btn_start.visibility = View.INVISIBLE
+        buttons_frame.test_btn_forward.setOnClickListener {
+            carManager?.writeData("FORWARD")
+            viewModel.onSendData("FORWARD")
+            konamiCodeListener.onInput(KonamiCodeController.InputType.UP)
+
+        }
+
+        buttons_frame.test_btn_backward.setOnClickListener {
+            carManager?.writeData("BACK")
+            viewModel.onSendData("BACK")
+            konamiCodeListener.onInput(KonamiCodeController.InputType.DOWN)
+        }
+
+        buttons_frame.test_btn_left.setOnClickListener {
+            carManager?.writeData("LEFT")
+            viewModel.onSendData("LEFT")
+            konamiCodeListener.onInput(KonamiCodeController.InputType.LEFT)
+        }
+
+        buttons_frame.test_btn_right.setOnClickListener {
+            carManager?.writeData("RIGHT")
+            viewModel.onSendData("RIGHT")
+            konamiCodeListener.onInput(KonamiCodeController.InputType.RIGHT)
+        }
+
+        buttons_frame.test_btn_stop.setOnClickListener {
+            carManager?.writeData("STOP")
+            viewModel.onSendData("STOP")
+        }
+
+        buttons_frame.test_btn_status_request.setOnClickListener {
+            carManager?.writeData("STATUS")
+            viewModel.onSendData("STATUS")
+        }
     }
 
     fun switchToManual() {
-        main_btn_forward.visibility = View.VISIBLE
-        main_btn_backward.visibility = View.VISIBLE
-        main_btn_left.visibility = View.VISIBLE
-        main_btn_right.visibility = View.VISIBLE
-
-        main_btn_start.visibility = View.VISIBLE
+        //buttons_frame.layoutResource = R.layout.buttons_manual
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,37 +110,6 @@ class MainActivity : AppCompatActivity() {
 
         main_recycler_view_bluetooth_log.adapter = messageListRecyclerViewAdapter
 
-
-        main_btn_forward.setOnClickListener {
-            carManager?.writeData("FORWARD")
-            viewModel.onSendData("FORWARD")
-            konamiCodeListener.onInput(KonamiCodeController.InputType.UP)
-
-        }
-
-        main_btn_backward.setOnClickListener {
-            carManager?.writeData("BACK")
-            viewModel.onSendData("BACK")
-            konamiCodeListener.onInput(KonamiCodeController.InputType.DOWN)
-        }
-
-        main_btn_left.setOnClickListener {
-            carManager?.writeData("LEFT")
-            viewModel.onSendData("LEFT")
-            konamiCodeListener.onInput(KonamiCodeController.InputType.LEFT)
-        }
-
-        main_btn_right.setOnClickListener {
-            carManager?.writeData("RIGHT")
-            viewModel.onSendData("RIGHT")
-            konamiCodeListener.onInput(KonamiCodeController.InputType.RIGHT)
-        }
-
-        main_btn_stop.setOnClickListener {
-            carManager?.writeData("STOP")
-            viewModel.onSendData("STOP")
-        }
-
         main_btn_auto_mode.setOnClickListener {
             switchToAuto()
             carManager?.writeData("AUTO")
@@ -121,17 +128,6 @@ class MainActivity : AppCompatActivity() {
             switchToManual()
             carManager?.writeData("MANUAL")
             viewModel.onSendData("MANUAL")
-        }
-
-        main_btn_start.setOnClickListener {
-            carManager?.writeData("START")
-            viewModel.onSendData("START")
-            konamiCodeListener.onInput(KonamiCodeController.InputType.START)
-        }
-
-        main_btn_status_request.setOnClickListener {
-            carManager?.writeData("STATUS")
-            viewModel.onSendData("STATUS")
         }
 
         konamiCodeListener.setOnKonamiCodeListener {
@@ -194,7 +190,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        switchToTest()
+        switchToAuto()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

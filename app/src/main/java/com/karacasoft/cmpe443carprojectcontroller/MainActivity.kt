@@ -34,6 +34,8 @@ class MainActivity : AppCompatActivity() {
     private var manualLastLeftDC = 0.0
     private var manualLastRightDC = 0.0
 
+    private var autoStarted = false
+
     private fun sendMessage(data : String) {
         carManager?.writeData(data)
         viewModel.onSendData(data)
@@ -45,15 +47,23 @@ class MainActivity : AppCompatActivity() {
         inflater.inflate(R.layout.buttons_auto, buttons_frame, true)
 
         buttons_frame.auto_btn_startstop.setOnClickListener {
-            carManager?.writeData("START")
-            viewModel.onSendData("START")
-            konamiCodeListener.onInput(KonamiCodeController.InputType.START)
+            if (autoStarted == false) {
+                sendMessage("START")
+                buttons_frame.auto_btn_startstop.text = "STOP"
+            }
+            else {
+                sendMessage("STOP")
+                buttons_frame.auto_btn_startstop.text = "START"
+            }
+            autoStarted = !autoStarted;
         }
 
         buttons_frame.auto_btn_status_request.setOnClickListener {
             carManager?.writeData("STATUS")
             viewModel.onSendData("STATUS")
         }
+
+        autoStarted = false
     }
 
     fun switchToTest() {

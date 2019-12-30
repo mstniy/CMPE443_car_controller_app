@@ -399,7 +399,8 @@ class MainActivity : AppCompatActivity() {
                 val stringified = String(buffer?: ByteArray(0))
                 viewModel.onReadData(stringified)
                 messageListRecyclerViewAdapter.notifyDataSetChanged()
-                dataFile?.println(stringified)
+                val stringToPrintToFile = String.format(Locale.US, "%s %.02f %.02f", stringified, manualLastLeftDC, manualLastRightDC)
+                dataFile?.println(stringToPrintToFile)
             }
         }
     }

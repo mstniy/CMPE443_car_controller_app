@@ -19,6 +19,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.buttons_auto.view.*
 import kotlinx.android.synthetic.main.buttons_manual.view.*
 import kotlinx.android.synthetic.main.buttons_test.view.*
+import java.io.File
+import java.io.PrintWriter
+import java.text.SimpleDateFormat
 import java.util.*
 
 enum class ControllerMode {
@@ -45,6 +48,7 @@ class MainActivity : AppCompatActivity() {
 
     private var saveDataTimer: Timer? = null
     private var saveDataEnabled = false
+    private var dataFile: PrintWriter? = null
 
     private fun sendMessage(data : String) {
         carManager?.writeData(data)
@@ -285,6 +289,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startSavingData() {
+        val sdf = SimpleDateFormat("yyyyMMddHHmmss")
+        val filename = "log_" + sdf.format(Date()) + ".txt"
+        dataFile = PrintWriter(File(getExternalFilesDir(null), filename), "UTF-8")
         saveDataTimer = Timer()
         saveDataTimer?.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
@@ -297,6 +304,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun stopSavingData() {
         saveDataTimer?.cancel()
+        saveDataTimer = null
+        dataFile?.close()
+        dataFile = null
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -328,8 +338,10 @@ class MainActivity : AppCompatActivity() {
             carManager!!.init()
             carManager!!.connect()
             carManager!!.setOnBluetoothDataRead { buffer, _ ->
-                viewModel.onReadData(String(buffer?: ByteArray(0)))
+                val stringified = String(buffer?: ByteArray(0))
+                viewModel.onReadData(stringified)
                 messageListRecyclerViewAdapter.notifyDataSetChanged()
+                dataFile?.println(stringified)
             }
         }
     }

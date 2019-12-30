@@ -13,18 +13,24 @@
         android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/main_modes_grid_layout"
+        app:layout_constraintTop_toBottomOf="@id/main_modes_grid_layout"
+        app:layout_constraintBottom_toTopOf="@id/buttons_frame"
         app:stackFromEnd="true"
         tools:itemCount="5"
         tools:listitem="@layout/list_item_message_car" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintBottom_toTopOf="@id/buttons_frame"/>
 
     <androidx.gridlayout.widget.GridLayout
         android:id="@+id/main_modes_grid_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:columnCount="2"
-        app:layout_constraintBottom_toTopOf="@id/buttons_frame"
+        app:layout_constraintTop_toTopOf="parent"
         app:rowCount="2">
 
         <Button

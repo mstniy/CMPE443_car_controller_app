@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.buttons_auto.view.*
 import kotlinx.android.synthetic.main.buttons_manual.view.*
 import kotlinx.android.synthetic.main.buttons_test.view.*
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
@@ -117,7 +118,7 @@ class MainActivity : AppCompatActivity() {
         manualLastLeftDC = currentLeftDC
         manualLastRightDC = currentRightDC
 
-        sendMessage(java.lang.String.format("DC %.02f %.02f", currentLeftDC, currentRightDC))
+        sendMessage(java.lang.String.format(Locale.US, "DC %.02f %.02f", currentLeftDC, currentRightDC)) // US locale to use a dot as the decimal separator, not a comma
     }
 
     fun switchToManual() {

@@ -26,6 +26,24 @@ class MainActivity : AppCompatActivity() {
     private val konamiCodeListener = KonamiCodeController()
     private var konamiCodeActivateCount = 0
 
+    fun switchToAuto() {
+        main_btn_forward.visibility = View.INVISIBLE
+        main_btn_backward.visibility = View.INVISIBLE
+        main_btn_left.visibility = View.INVISIBLE
+        main_btn_right.visibility = View.INVISIBLE
+
+        main_btn_start.visibility = View.VISIBLE
+    }
+
+    fun switchToTest() {
+        main_btn_forward.visibility = View.VISIBLE
+        main_btn_backward.visibility = View.VISIBLE
+        main_btn_left.visibility = View.VISIBLE
+        main_btn_right.visibility = View.VISIBLE
+
+        main_btn_start.visibility = View.INVISIBLE
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -77,12 +95,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         main_btn_auto_mode.setOnClickListener {
+            switchToAuto()
             carManager?.writeData("AUTO")
             viewModel.onSendData("AUTO")
             konamiCodeListener.onInput(KonamiCodeController.InputType.A)
         }
 
         main_btn_test_mode.setOnClickListener {
+            switchToTest()
             carManager?.writeData("TEST")
             viewModel.onSendData("TEST")
             konamiCodeListener.onInput(KonamiCodeController.InputType.B)
@@ -158,6 +178,8 @@ class MainActivity : AppCompatActivity() {
                     .show()
             }
         }
+
+        switchToTest()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

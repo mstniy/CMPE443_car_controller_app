@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 
     private var controllerMode = ControllerMode.Test
 
+    private var saveDataTimer: Timer? = null
     private var saveDataEnabled = false
 
     private fun sendMessage(data : String) {
@@ -283,12 +284,30 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
+    private fun startSavingData() {
+        saveDataTimer = Timer()
+        saveDataTimer?.scheduleAtFixedRate(object : TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    sendMessage("STATUS")
+                }
+            }
+        }, 0, 100)
+    }
+
+    private fun stopSavingData() {
+        saveDataTimer?.cancel()
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId) {
             R.id.save_data -> {
                 saveDataEnabled = !saveDataEnabled
-                //TODO: Do other stuff here too, probably spawn a timer
                 invalidateOptionsMenu()
+                if (saveDataEnabled)
+                    startSavingData();
+                else
+                    stopSavingData();
             }
             R.id.connect_to_device -> {
                 CarManager.selectedDevice = null

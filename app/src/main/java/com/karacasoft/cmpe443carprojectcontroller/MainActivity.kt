@@ -1,13 +1,12 @@
 package com.karacasoft.cmpe443carprojectcontroller
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.ScrollView
 import android.widget.SeekBar
 import androidx.appcompat.app.AlertDialog
@@ -17,12 +16,22 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.buttons_auto.view.*
+import kotlinx.android.synthetic.main.buttons_custom.view.*
 import kotlinx.android.synthetic.main.buttons_manual.view.*
 import kotlinx.android.synthetic.main.buttons_test.view.*
 import java.io.File
 import java.io.PrintWriter
 import java.text.SimpleDateFormat
 import java.util.*
+import android.content.Context.INPUT_METHOD_SERVICE
+import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.ContextCompat.getSystemService
+import android.app.Activity
+
+
+
+
 
 enum class ControllerMode {
     Auto, Test, Manual
@@ -56,6 +65,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun switchToAuto() {
+        hideSoftKeyboard()
+        stopSavingData()
         controllerMode = ControllerMode.Auto
         invalidateOptionsMenu()
         buttons_frame.removeAllViews()
@@ -83,6 +94,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun switchToTest() {
+        hideSoftKeyboard()
+        stopSavingData()
         controllerMode = ControllerMode.Test
         invalidateOptionsMenu()
         buttons_frame.removeAllViews()
@@ -138,7 +151,48 @@ class MainActivity : AppCompatActivity() {
         sendMessage(java.lang.String.format(Locale.US, "DC %.02f %.02f", currentLeftDC, currentRightDC)) // US locale to use a dot as the decimal separator, not a comma
     }
 
+    fun showSoftKeyboard() {
+        val view = currentFocus
+        if (view != null) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(view, 0)
+        }
+    }
+
+    fun hideSoftKeyboard() {
+        val view = currentFocus
+        if (view != null) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+    }
+
+    private fun switchToCustom() {
+        invalidateOptionsMenu()
+        buttons_frame.removeAllViews()
+        var inflater = LayoutInflater.from(this)
+        inflater.inflate(R.layout.buttons_custom, buttons_frame, true)
+
+        //buttons_frame.custom_edit_text.setImeActionLabel("SEND", KeyEvent.KEYCODE_ENTER)
+        buttons_frame.custom_edit_text.setOnKeyListener(object : View.OnKeyListener {
+            override fun onKey(v: View?, keyCode: Int, event: KeyEvent?): Boolean {
+                if ((event!!.getAction() == KeyEvent.ACTION_DOWN) &&
+                    (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    sendMessage(buttons_frame.custom_edit_text.text.toString());
+                    buttons_frame.custom_edit_text.setText("")
+                    return true;
+                }
+                return false;
+            }
+        })
+
+        if (buttons_frame.custom_edit_text.requestFocus()) {
+            showSoftKeyboard()
+        }
+    }
+
     fun switchToManual() {
+        hideSoftKeyboard()
         controllerMode = ControllerMode.Manual
         saveDataEnabled = false
         invalidateOptionsMenu()
@@ -210,6 +264,10 @@ class MainActivity : AppCompatActivity() {
             switchToManual()
             carManager?.writeData("MANUAL")
             viewModel.onSendData("MANUAL")
+        }
+
+        main_btn_custom.setOnClickListener {
+            switchToCustom()
         }
 
         konamiCodeListener.setOnKonamiCodeListener {

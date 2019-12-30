@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ScrollView
+import android.widget.SeekBar
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.buttons_auto.view.*
+import kotlinx.android.synthetic.main.buttons_manual.view.*
 import kotlinx.android.synthetic.main.buttons_test.view.*
 
 class MainActivity : AppCompatActivity() {
@@ -28,6 +30,14 @@ class MainActivity : AppCompatActivity() {
 
     private val konamiCodeListener = KonamiCodeController()
     private var konamiCodeActivateCount = 0
+
+    private var manualLastLeftDC = 0.0
+    private var manualLastRightDC = 0.0
+
+    private fun sendMessage(data : String) {
+        carManager?.writeData(data)
+        viewModel.onSendData(data)
+    }
 
     fun switchToAuto() {
         buttons_frame.removeAllViews()
@@ -87,8 +97,47 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateManualDC() {
+        val currentLeftDC = buttons_frame.manual_seekbar_left.progress/100.0
+        val currentRightDC = buttons_frame.manual_seekbar_right.progress/100.0
+
+        if (currentLeftDC == manualLastLeftDC && currentRightDC == manualLastRightDC)
+            return
+
+        manualLastLeftDC = currentLeftDC
+        manualLastRightDC = currentRightDC
+
+        sendMessage(java.lang.String.format("DC %.02f %.02f", currentLeftDC, currentRightDC))
+    }
+
     fun switchToManual() {
-        //buttons_frame.layoutResource = R.layout.buttons_manual
+        buttons_frame.removeAllViews()
+        var inflater = LayoutInflater.from(this)
+        inflater.inflate(R.layout.buttons_manual, buttons_frame, true)
+        manualLastLeftDC = 0.0
+        manualLastRightDC = 0.0
+        buttons_frame.manual_seekbar_left.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                updateManualDC()
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
+        buttons_frame.manual_seekbar_right.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                updateManualDC()
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
+        buttons_frame.manual_btn_status_request.setOnClickListener {
+            carManager?.writeData("STATUS")
+            viewModel.onSendData("STATUS")
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

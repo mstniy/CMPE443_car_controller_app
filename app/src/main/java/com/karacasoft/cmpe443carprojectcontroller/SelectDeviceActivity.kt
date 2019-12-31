@@ -22,7 +22,7 @@ class SelectDeviceActivity : AppCompatActivity() {
     private val btRequestCode = 0x100
     private val permissionRequestCode = 0x200
 
-    private val devicesFound : MutableSet<BluetoothDevice> = HashSet()
+    private val devicesFound : MutableList<BluetoothDevice> = ArrayList()
     private val adapter : BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
     private val listAdapter = SelectDeviceListRecyclerViewAdapter(devicesFound)
@@ -32,8 +32,17 @@ class SelectDeviceActivity : AppCompatActivity() {
             when(intent?.action) {
                 BluetoothDevice.ACTION_FOUND -> {
                     val device: BluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                    devicesFound.add(device)
-                    listAdapter.notifyDataSetChanged()
+                    var found = false
+                    devicesFound.forEachIndexed { index, bluetoothDevice ->
+                        if (bluetoothDevice.address == device.address) {
+                            devicesFound.set(index, bluetoothDevice)
+                            found = true
+                        }
+                    }
+                    if (found == false) {
+                        devicesFound.add(device)
+                        listAdapter.notifyDataSetChanged()
+                    }
                 }
                 BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
                     adapter.startDiscovery()

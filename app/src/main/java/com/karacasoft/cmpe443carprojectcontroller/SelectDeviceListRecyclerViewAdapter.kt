@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class SelectDeviceListRecyclerViewAdapter(private val data : Set<BluetoothDevice>):
+class SelectDeviceListRecyclerViewAdapter(private val data : List<BluetoothDevice>):
     RecyclerView.Adapter<SelectDeviceListRecyclerViewAdapter.ViewHolder>() {
 
     private var onDeviceClickListener : ((device: BluetoothDevice) -> Unit)? = null

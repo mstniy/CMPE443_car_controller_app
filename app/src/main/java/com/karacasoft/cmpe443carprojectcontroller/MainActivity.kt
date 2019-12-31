@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() {
 
     private var manualLastLeftDC = 0.0
     private var manualLastRightDC = 0.0
+    private var manualExpectedLineCount = 0
 
     private var autoStarted = false
 
@@ -139,6 +140,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateManualDC() {
+        if (manualExpectedLineCount > 0)
+            return ;
+
         val currentLeftDC = (buttons_frame.manual_seekbar_left.progress-50)/50.0
         val currentRightDC = (buttons_frame.manual_seekbar_right.progress-50)/50.0
 
@@ -149,6 +153,7 @@ class MainActivity : AppCompatActivity() {
         manualLastRightDC = currentRightDC
 
         sendMessage(java.lang.String.format(Locale.US, "DC %.02f %.02f", currentLeftDC, currentRightDC)) // US locale to use a dot as the decimal separator, not a comma
+        manualExpectedLineCount++; // For the OK\r\n
     }
 
     fun showSoftKeyboard() {
@@ -194,6 +199,7 @@ class MainActivity : AppCompatActivity() {
     fun switchToManual() {
         hideSoftKeyboard()
         controllerMode = ControllerMode.Manual
+        manualExpectedLineCount = 0
         saveDataEnabled = false
         invalidateOptionsMenu()
         buttons_frame.removeAllViews()
@@ -354,7 +360,10 @@ class MainActivity : AppCompatActivity() {
         saveDataTimer?.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
                 runOnUiThread {
-                    sendMessage("STATUS")
+                    if (manualExpectedLineCount == 0) {
+                        sendMessage("STATUS")
+                        manualExpectedLineCount += 2 // One for STATUS\r\n, one for the actual status string
+                    }
                 }
             }
         }, 0, 100)
@@ -400,6 +409,9 @@ class MainActivity : AppCompatActivity() {
                 viewModel.onReadData(stringified)
                 messageListRecyclerViewAdapter.notifyDataSetChanged()
                 val stringToPrintToFile = String.format(Locale.US, "%s %.02f %.02f", stringified, manualLastLeftDC, manualLastRightDC)
+                manualExpectedLineCount--;
+                if (manualExpectedLineCount < 0)
+                    manualExpectedLineCount = 0;
                 dataFile?.println(stringToPrintToFile)
             }
         }

@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 release/
+app/debug
+app/release

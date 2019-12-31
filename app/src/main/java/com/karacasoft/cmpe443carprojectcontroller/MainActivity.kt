@@ -238,7 +238,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         viewModel = ViewModelProviders.of(this)[MainViewModel::class.java]
-        CarManager.initService(this)
+        if (CarManager.initialized == false) // Do not drop the connection on rotations
+            CarManager.initService(this)
 
         messageListRecyclerViewAdapter = MessageListRecyclerViewAdapter(viewModel.getMessageList().value!!)
 
@@ -398,7 +399,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if(CarManager.selectedDevice != null) {
+        if(CarManager.selectedDevice != null && CarManager.newlySelected) {
+            CarManager.newlySelected = false
             carManager?.disconnect()
             carManager = CarManager(CarManager.selectedDevice!!)
             carManager!!.init()

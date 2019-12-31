@@ -70,7 +70,9 @@ class CarManager(private val bluetoothDevice: BluetoothDevice) {
     companion object CarManager {
         private val uuid = UUID.fromString("0000FFE0-0000-1000-8000-00805f9b34fb")
         private val rx = UUID.fromString("0000FFE1-0000-1000-8000-00805f9b34fb")
+        var initialized = false
         var selectedDevice: BluetoothDevice? = null
+        var newlySelected = false
 
         fun initService(ctx: Context) {
             val cfg = BluetoothConfiguration()
@@ -85,6 +87,7 @@ class CarManager(private val bluetoothDevice: BluetoothDevice) {
             cfg.uuidCharacteristic = rx
 
             BluetoothService.init(cfg)
+            initialized = true
         }
     }
 

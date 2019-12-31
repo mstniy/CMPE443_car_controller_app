@@ -115,6 +115,7 @@ class SelectDeviceActivity : AppCompatActivity() {
         select_device_device_list.adapter = listAdapter
         listAdapter.setOnDeviceClickListener {
             CarManager.selectedDevice = it
+            CarManager.newlySelected = true
             finish()
         }
     }

@@ -52,13 +52,11 @@ class MainActivity : AppCompatActivity() {
 
     private var manualLastLeftDC = 0.0
     private var manualLastRightDC = 0.0
-    private var manualExpectedLineCount = 0
 
     private var autoStarted = false
 
     private var controllerMode = ControllerMode.Test
 
-    private var saveDataTimer: Timer? = null
     private var saveDataEnabled = false
     private var dataFile: PrintWriter? = null
 
@@ -142,8 +140,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateManualDC() {
-        if (manualExpectedLineCount > 0)
-            return ;
 
         val currentLeftDC = (buttons_frame.manual_seekbar_left.progress-50)/50.0
         val currentRightDC = (buttons_frame.manual_seekbar_right.progress-50)/50.0
@@ -155,7 +151,6 @@ class MainActivity : AppCompatActivity() {
         manualLastRightDC = currentRightDC
 
         sendMessage(java.lang.String.format(Locale.US, "DC %.02f %.02f", currentLeftDC, currentRightDC)) // US locale to use a dot as the decimal separator, not a comma
-        manualExpectedLineCount++; // For the OK\r\n
     }
 
     fun showSoftKeyboard() {
@@ -202,7 +197,6 @@ class MainActivity : AppCompatActivity() {
         hideSoftKeyboard()
         stopSavingData()
         controllerMode = ControllerMode.Manual
-        manualExpectedLineCount = 0
         saveDataEnabled = false
         invalidateOptionsMenu()
         buttons_frame.removeAllViews()
@@ -357,25 +351,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startSavingData() {
-        val sdf = SimpleDateFormat("yyyyMMddHHmmss")
+        val sdf = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss")
         val filename = "log_" + sdf.format(Date()) + ".txt"
         dataFile = PrintWriter(File(getExternalFilesDir(null), filename), "UTF-8")
-        saveDataTimer = Timer()
-        saveDataTimer?.scheduleAtFixedRate(object : TimerTask() {
-            override fun run() {
-                runOnUiThread {
-                    if (manualExpectedLineCount == 0) {
-                        sendMessage("STATUS")
-                        manualExpectedLineCount += 2 // One for STATUS\r\n, one for the actual status string
-                    }
-                }
-            }
-        }, 0, 100)
+        sendMessage("LOG ON")
     }
 
     private fun stopSavingData() {
-        saveDataTimer?.cancel()
-        saveDataTimer = null
+        sendMessage("LOG OFF")
         dataFile?.close()
         dataFile = null
     }
@@ -412,11 +395,7 @@ class MainActivity : AppCompatActivity() {
                 viewModel.onReadData(stringified)
                 messageListRecyclerViewAdapter.notifyDataSetChanged()
                 val stringToPrintToFile = String.format(Locale.US, "%d %s %.02f %.02f", System.currentTimeMillis(), stringified, manualLastLeftDC, manualLastRightDC)
-                manualExpectedLineCount--;
-                if (manualExpectedLineCount < 0)
-                    manualExpectedLineCount = 0;
-                if (stringified != "OK" && stringified != "STATUS") // Ignore acknowledgement messages
-                    dataFile?.println(stringToPrintToFile)
+                dataFile?.println(stringToPrintToFile)
             }
         }
     }

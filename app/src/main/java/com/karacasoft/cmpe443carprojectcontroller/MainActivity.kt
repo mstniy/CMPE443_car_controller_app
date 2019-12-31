@@ -408,7 +408,7 @@ class MainActivity : AppCompatActivity() {
                 val stringified = String(buffer?: ByteArray(0)).replace("\r", "").replace("\n", "") // Remove \r's and \n's
                 viewModel.onReadData(stringified)
                 messageListRecyclerViewAdapter.notifyDataSetChanged()
-                val stringToPrintToFile = String.format(Locale.US, "%s %.02f %.02f", stringified, manualLastLeftDC, manualLastRightDC)
+                val stringToPrintToFile = String.format(Locale.US, "%d %s %.02f %.02f", System.currentTimeMillis(), stringified, manualLastLeftDC, manualLastRightDC)
                 manualExpectedLineCount--;
                 if (manualExpectedLineCount < 0)
                     manualExpectedLineCount = 0;

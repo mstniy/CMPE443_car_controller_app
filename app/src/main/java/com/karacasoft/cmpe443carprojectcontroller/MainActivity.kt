@@ -405,14 +405,15 @@ class MainActivity : AppCompatActivity() {
             carManager!!.init()
             carManager!!.connect()
             carManager!!.setOnBluetoothDataRead { buffer, _ ->
-                val stringified = String(buffer?: ByteArray(0))
+                val stringified = String(buffer?: ByteArray(0)).replace("\r", "").replace("\n", "") // Remove \r's and \n's
                 viewModel.onReadData(stringified)
                 messageListRecyclerViewAdapter.notifyDataSetChanged()
                 val stringToPrintToFile = String.format(Locale.US, "%s %.02f %.02f", stringified, manualLastLeftDC, manualLastRightDC)
                 manualExpectedLineCount--;
                 if (manualExpectedLineCount < 0)
                     manualExpectedLineCount = 0;
-                dataFile?.println(stringToPrintToFile)
+                if (stringified != "OK" && stringified != "STATUS") // Ignore acknowledgement messages
+                    dataFile?.println(stringToPrintToFile)
             }
         }
     }

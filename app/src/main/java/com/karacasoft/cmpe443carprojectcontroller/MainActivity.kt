@@ -39,6 +39,7 @@ enum class ControllerMode {
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
+    private val MANUAL_SEND_MIN_PERIOD_MS = 30
     private lateinit var viewModel : MainViewModel
 
     private lateinit var messageListRecyclerViewAdapter: MessageListRecyclerViewAdapter
@@ -52,6 +53,7 @@ class MainActivity : AppCompatActivity() {
 
     private var manualLastLeftDC = 0.0
     private var manualLastRightDC = 0.0
+    private var manualLastSendMS = 0L
 
     private var autoStarted = false
 
@@ -136,6 +138,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateManualDC() {
+        if (System.currentTimeMillis() - manualLastSendMS < MANUAL_SEND_MIN_PERIOD_MS)
+            return ;
+        manualLastSendMS = System.currentTimeMillis()
 
         val currentLeftDC = (buttons_frame.manual_seekbar_left.progress-50)/50.0
         val currentRightDC = (buttons_frame.manual_seekbar_right.progress-50)/50.0

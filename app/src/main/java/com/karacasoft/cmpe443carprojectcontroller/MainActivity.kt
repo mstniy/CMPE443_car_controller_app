@@ -198,6 +198,7 @@ class MainActivity : AppCompatActivity() {
 
     fun switchToManual() {
         hideSoftKeyboard()
+        stopSavingData()
         controllerMode = ControllerMode.Manual
         manualExpectedLineCount = 0
         saveDataEnabled = false

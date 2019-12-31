@@ -43,7 +43,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var messageListRecyclerViewAdapter: MessageListRecyclerViewAdapter
 
-    private var carManager: CarManager? = null
+    companion object {
+        var carManager: CarManager? = null
+    }
 
     private val konamiCodeListener = KonamiCodeController()
     private var konamiCodeActivateCount = 0

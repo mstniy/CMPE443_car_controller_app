@@ -399,9 +399,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if(CarManager.selectedDevice != null) {
-            if(carManager != null) {
-                carManager!!.disconnect()
-            }
+            carManager?.disconnect()
             carManager = CarManager(CarManager.selectedDevice!!)
             carManager!!.init()
             carManager!!.connect()

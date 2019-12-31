@@ -20,14 +20,16 @@ class CarManager(private val bluetoothDevice: BluetoothDevice) {
 
     private var onBluetoothDataRead : ((buffer: ByteArray?, length: Int) -> Unit)? = null
 
+    var service : BluetoothService? = null
+
     fun setOnBluetoothDataRead(onDataRead : ((buffer: ByteArray?, length: Int) -> Unit)?) {
         onBluetoothDataRead = onDataRead
     }
 
     fun init() {
-        val service = BluetoothService.getDefaultInstance()
+        service = BluetoothService.getDefaultInstance()
 
-        service.setOnEventCallback(object : BluetoothService.OnBluetoothEventCallback {
+        service!!.setOnEventCallback(object : BluetoothService.OnBluetoothEventCallback {
             override fun onDataRead(buffer: ByteArray?, length: Int) {
                 onBluetoothDataRead?.invoke(buffer, length)
             }
@@ -52,16 +54,14 @@ class CarManager(private val bluetoothDevice: BluetoothDevice) {
     }
 
     fun connect() {
-        val service = BluetoothService.getDefaultInstance()
-        service.connect(bluetoothDevice)
+        service!!.connect(bluetoothDevice)
     }
 
     fun disconnect() {
-        BluetoothService.getDefaultInstance().disconnect()
+        service!!.disconnect()
     }
 
     fun writeData(data: String) {
-        val service = BluetoothService.getDefaultInstance()
         val writer = BluetoothWriter(service)
 
         writer.write(data + "\r\n")

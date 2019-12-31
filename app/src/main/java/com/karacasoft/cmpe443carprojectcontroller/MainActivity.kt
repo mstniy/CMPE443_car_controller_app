@@ -67,9 +67,7 @@ class MainActivity : AppCompatActivity() {
 
     fun switchToAuto() {
         hideSoftKeyboard()
-        stopSavingData()
         controllerMode = ControllerMode.Auto
-        invalidateOptionsMenu()
         buttons_frame.removeAllViews()
         var inflater = LayoutInflater.from(this)
         inflater.inflate(R.layout.buttons_auto, buttons_frame, true)
@@ -96,9 +94,7 @@ class MainActivity : AppCompatActivity() {
 
     fun switchToTest() {
         hideSoftKeyboard()
-        stopSavingData()
         controllerMode = ControllerMode.Test
-        invalidateOptionsMenu()
         buttons_frame.removeAllViews()
         var inflater = LayoutInflater.from(this)
         inflater.inflate(R.layout.buttons_test, buttons_frame, true)
@@ -170,7 +166,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun switchToCustom() {
-        invalidateOptionsMenu()
         buttons_frame.removeAllViews()
         var inflater = LayoutInflater.from(this)
         inflater.inflate(R.layout.buttons_custom, buttons_frame, true)
@@ -195,10 +190,7 @@ class MainActivity : AppCompatActivity() {
 
     fun switchToManual() {
         hideSoftKeyboard()
-        stopSavingData()
         controllerMode = ControllerMode.Manual
-        saveDataEnabled = false
-        invalidateOptionsMenu()
         buttons_frame.removeAllViews()
         var inflater = LayoutInflater.from(this)
         inflater.inflate(R.layout.buttons_manual, buttons_frame, true)
@@ -338,15 +330,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        if (controllerMode == ControllerMode.Manual) {
-            if (saveDataEnabled)
-                menuInflater.inflate(R.menu.main_menu_save_enabled, menu)
-            else
-                menuInflater.inflate(R.menu.main_menu_save_disabled, menu)
-        }
-        else {
-            menuInflater.inflate(R.menu.main_menu_no_save, menu)
-        }
+        if (saveDataEnabled)
+            menuInflater.inflate(R.menu.main_menu_save_enabled, menu)
+        else
+            menuInflater.inflate(R.menu.main_menu_save_disabled, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -394,8 +381,7 @@ class MainActivity : AppCompatActivity() {
                 val stringified = String(buffer?: ByteArray(0)).replace("\r", "").replace("\n", "") // Remove \r's and \n's
                 viewModel.onReadData(stringified)
                 messageListRecyclerViewAdapter.notifyDataSetChanged()
-                val stringToPrintToFile = String.format(Locale.US, "%d %s %.02f %.02f", System.currentTimeMillis(), stringified, manualLastLeftDC, manualLastRightDC)
-                dataFile?.println(stringToPrintToFile)
+                dataFile?.println(stringified)
             }
         }
     }

@@ -35,7 +35,11 @@ class CarManager(private val bluetoothDevice: BluetoothDevice) {
             }
 
             override fun onStatusChange(status: BluetoothStatus?) {
-
+                Log.d(TAG, "status: " + status.toString());
+                if (status == BluetoothStatus.NONE) { // Disconnected
+                    Log.d(TAG, "Reconnecting...");
+                    service!!.connect(bluetoothDevice)
+                }
             }
 
             override fun onDataWrite(buffer: ByteArray?) {

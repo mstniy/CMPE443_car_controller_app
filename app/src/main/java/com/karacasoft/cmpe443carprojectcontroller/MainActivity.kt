@@ -386,6 +386,11 @@ class MainActivity : AppCompatActivity() {
                 val stringified = String(buffer?: ByteArray(0)).replace("\r", "").replace("\n", "") // Remove \r's and \n's
                 viewModel.onReadData(stringified)
                 messageListRecyclerViewAdapter.notifyDataSetChanged()
+                if (stringified == "FINISH") {
+                    autoStarted = false
+                    if (buttons_frame.auto_btn_startstop != null)
+                        buttons_frame.auto_btn_startstop.text = "START"
+                }
                 dataFile?.println(stringified)
             }
         }
